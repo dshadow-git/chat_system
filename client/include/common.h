@@ -1,0 +1,91 @@
+//
+// Created by lei-long on 2020/12/22.
+//
+
+#ifndef CHAT_SYSTEM_COMMON_H
+#define CHAT_SYSTEM_COMMON_H
+
+#define USER_ID_SIZE 7
+#define GROUP_ID_SIZE 6
+#define USER_NAME_SIZE 11
+#define GROUP_NAME_SIZE 20
+#define USER_PWD_SIZE 12
+#define DATA_MAX_SIZE 1024
+#define FILE_NAME_MAX_SIZE 24
+#define MY_MUTUAL_LOGIN 1
+#define MY_MUTUAL_REGISTER 2
+#define MY_MUTUAL_FRIEND 3
+#define MY_MUTUAL_GROUP 4
+#define MY_MUTUAL_UN_LOGIN 5
+#define MY_MSG_FILE 11
+#define MY_MSG_CONTENT 12
+
+struct mutual{
+    int type;
+    int data_len;
+    void* data;
+};
+
+/**
+ * 好友消息
+ */
+struct friend_msg{
+    int type;
+    int data_len;
+    char src_user[USER_ID_SIZE];
+    char dest_user[USER_ID_SIZE];
+    char send_time[20];
+    void* data;
+}friend_msg_t;
+
+/**
+ * 群聊消息
+ */
+struct group_msg{
+    int type;
+    int data_len;
+    char group_id[GROUP_ID_SIZE];
+    char user_id[USER_ID_SIZE];
+    char send_time[20];
+    void* data;
+}group_msg_t;
+
+/*
+ * 提示消息
+ */
+struct general_msg{
+    int data_len;
+    char data[0];
+}general_msg_t;
+
+/**
+ * 文件消息
+ */
+struct file_msg{
+    int file_len;
+    int data_len;
+    char filename[0];
+    char data[0];
+}file_msg_t;
+
+struct user{
+    int sex;
+    int status;
+    char id[USER_ID_SIZE];
+    char name[USER_NAME_SIZE];
+    char pwd[USER_PWD_SIZE];
+};
+
+void set_sock_id(int sock_id);
+
+int get_sock_id();
+
+void set_user_id(char *id);
+
+char* get_user_id();
+
+void set_user(struct user self_user);
+
+struct user get_user();
+
+#endif //CHAT_SYSTEM_COMMON_H
