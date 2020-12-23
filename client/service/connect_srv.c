@@ -30,12 +30,14 @@ int connect_create(const char *host ,int port){
     }
     set_sock_id(sock_fd);
     if(connect(sock_fd , (struct sockaddr *)&clie_addr,sizeof(struct sockaddr_in)) < 0){
+        printf("%s:%d:\n", __func__, __LINE__);
         perror("connect");
         exit(0);
     }
     pthread_create(&p_id , NULL , thread , NULL);
     //usleep(5000);
     //pthread_cond_signal(&cond);
+    return 1;
 }
 
 void connect_close(){

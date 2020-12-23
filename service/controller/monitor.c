@@ -4,34 +4,49 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <errno.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/time.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <time.h>
 #include <pthread.h>
-#include "../include/monitor.h"
-#include "../include/listen.h"
+#include "include/monitor.h"
+#include "include/listen.h"
+#include "../persistence/include/account_sql.h"
 
 void *listen_distribute(void* arg){
     int client_id = *(int*)arg;
-    struct msg *mg = (struct msg*) malloc (sizeof(struct msg) + DATA_MAX_LEN);
-    int ret = recv(client_id, mg, sizeof(struct msg), 0);
-    if (ret == 0){
-        perror("recv");
+
+    while (1) {
+        struct mutual *mu = (struct mutual *) malloc(sizeof(struct mutual));
+        int ret = recv(client_id, mu, sizeof(struct mutual), 0);
+        if (ret == -1){
+            perror("recv");
+            break;
+        }
+        if (ret == 0) {
+            perror("recv");
+        }
+        printf("type:%d, len:%d\n", mu->type, mu->data_len);
+        switch (mu->type) {
+            case REQUEST_MUTUAL_LOGIN:
+                listen_login(client_id, mu);
+                account_sql_login(*(struct user*)mu->data);
+                break;
+            case REQUEST_MUTUAL_REGISTER:
+                listen_register(client_id, mu);
+                account_sql_register(*(struct user*)mu->data);
+                break;
+            case REQUEST_MUTUAL_FRIEND:
+                listen_friend(client_id, mu);
+                break;
+            case REQUEST_MUTUAL_GROUP:
+                listen_group(client_id, mu);
+                break;
+            case REQUEST_MUTUAL_UN_LOGIN:
+                listen_nu_login(client_id, mu);
+                account_sql_nu_login(*(struct user*)mu->data);
+                break;
+            default:
+                printf("未知数据类型\n");
+        }
     }
-    switch (mg->type){
-        case REQUEST_LOGIN: listen_login(client_id);
-            break;
-        case REQUEST_REGISTER: listen_register(client_id);
-            break;
-        case REQUEST_DATA: listen_data(client_id);
-            break;
-    }
-    close(client_id);
     pthread_exit(0);
 }
 
@@ -44,14 +59,14 @@ int my_listen() {
     int i;
     //建立sock_fd套接字
     if((sock_fd = socket(AF_INET, SOCK_STREAM, 0))==-1){
-        perror("setsockopt");
+        PERROR("stockpot");
         exit(1);
     }
-    printf("sockect_fd = %d\n", sock_fd);
+    printf("socket_fd = %d\n", sock_fd);
     //设置套接口的选项 SO_REUSEADDR 允许在同一个端口启动服务器的多个实例
     // setsockopt的第二个参数SOL SOCKET 指定系统中，解释选项的级别 普通套接字
     if(setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))==-1){
-        perror("setsockopt error \n");
+        PERROR("setstockpot");
         exit(1);
     }
 
@@ -60,11 +75,11 @@ int my_listen() {
     server_addr.sin_addr.s_addr = INADDR_ANY;//通配IP
     memset(server_addr.sin_zero,'\0',sizeof(server_addr.sin_zero));
     if(bind(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1){
-        perror("bind error!\n");
+        PERROR("bind");
         exit(1);
     }
-    if(my_listen(sock_fd, MAXCLINE) == -1){
-        perror("my_listen error!\n");
+    if(listen(sock_fd, MAXCLINE) == -1){
+        PERROR("listen");
         exit(1);
     }
 
@@ -74,11 +89,10 @@ int my_listen() {
         struct sockaddr_in client_addr; // 客户端的地址信息
         int client_sock = accept(sock_fd, (struct sockaddr*)&client_addr, &sin_size);
         if (client_sock < 0) {
-            perror("client_sock\n");
+            PERROR("accept");
             return -1;
         }
         pthread_t tid;
         pthread_create(&tid, NULL, listen_distribute, (void*)&client_sock);
-
     }
 }

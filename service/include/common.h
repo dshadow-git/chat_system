@@ -1,5 +1,5 @@
 //
-// Created by lei-long on 2020/12/22.
+// Created by lei-long on 2020/12/23.
 //
 
 #ifndef CHAT_SYSTEM_COMMON_H
@@ -12,13 +12,17 @@
 #define USER_PWD_SIZE 12
 #define DATA_MAX_SIZE 1024
 #define FILE_NAME_MAX_SIZE 24
-#define MY_MUTUAL_LOGIN 1
-#define MY_MUTUAL_REGISTER 2
-#define MY_MUTUAL_FRIEND 3
-#define MY_MUTUAL_GROUP 4
-#define MY_MUTUAL_UN_LOGIN 5
-#define MY_MSG_FILE 11
-#define MY_MSG_CONTENT 12
+#define REQUEST_MUTUAL_LOGIN 1
+#define REQUEST_MUTUAL_REGISTER 2
+#define REQUEST_MUTUAL_FRIEND 3
+#define REQUEST_MUTUAL_GROUP 4
+#define REQUEST_MUTUAL_UN_LOGIN 5
+#define REQUEST_MSG_FILE 11
+#define REQUEST_MSG_CONTENT 12
+
+#define PERROR(error) \
+    printf("%s:%s:%d\n", __FILE__, __func__, __LINE__); \
+    perror(error)
 
 struct mutual{
     int type;
@@ -50,7 +54,7 @@ struct group_msg{
     void* data;
 };
 
-/*
+/**
  * 提示消息
  */
 struct general_msg{
@@ -75,17 +79,5 @@ struct user{
     char name[USER_NAME_SIZE];
     char pwd[USER_PWD_SIZE];
 };
-
-void set_sock_id(int sock_id);
-
-int get_sock_id();
-
-void set_user_id(char *id);
-
-char* get_user_id();
-
-void set_user(struct user self_user);
-
-struct user get_user();
 
 #endif //CHAT_SYSTEM_COMMON_H

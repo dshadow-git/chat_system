@@ -19,14 +19,14 @@ int account_srv_login(char* id, char* pwd){
     int ret;
     ret = send(sock_id, (void*)&mu, sizeof(mu), 0);
     if (ret == -1){
-        printf("%s :", __func__);
+        printf("%s :\n", __func__);
         perror("send");
         return -1;
     }
 
     ret = send(sock_id, (void*)&user, sizeof(user), 0);
     if (ret == -1){
-        printf("%s :", __func__);
+        printf("%s :\n", __func__);
         perror("send");
         return 0;
     }

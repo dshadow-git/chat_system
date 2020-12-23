@@ -3,18 +3,58 @@
 //
 
 #include <stdio.h>
+#include <unistd.h>
+#include "include/listen.h"
 
-#include "../include/listen.h"
+void listen_register(int client_id, struct mutual *mu) {
+    struct user user;
+    int ret = recv(client_id, (void*)&user, sizeof(user), 0);
+    if (ret == sizeof(user)){
+        printf("id:%s, name:%s, pwd:%s\n", user.id, user.name, user.pwd);
+        mu->data = &user;
+    } else {
+        PERROR("recv");
+        listen_nu_login(client_id, NULL);
+    }
+}
 
-void listen_register(int client_id){
-    printf("2 %d\n", client_id);
+void listen_login(int client_id, struct mutual *mu) {
+    struct user user;
+    int ret = recv(client_id, (void*)&user, sizeof(user), 0);
+    if (ret == sizeof(user)){
+        printf("id:%s, pwd:%s\n", user.id, user.pwd);
+        mu->data = &user;
+    } else {
+        PERROR("recv");
+    }
+}
+
+void listen_friend(int client_id, struct mutual *mu) {
+    struct friend_msg friendMsg;
+    int ret = recv(client_id, (void*)&friendMsg, sizeof(friendMsg), 0);
+    if (ret == sizeof(friendMsg)){
+        printf("type:%d, src:%s, dest:%s\n", friendMsg.type, friendMsg.src_user, friendMsg.dest_user);
+        mu->data = &friendMsg;
+    } else {
+        PERROR("recv");
+    }
+}
+
+void listen_group(int client_id, struct mutual *mu) {
+    struct group_msg groupMsg;
+    int ret = recv(client_id, (void*)&groupMsg, sizeof(groupMsg), 0);
+    if (ret == sizeof(groupMsg)){
+        mu->data = &groupMsg;
+    } else {
+        PERROR("recv");
+    }
+}
+
+void listen_nu_login(int client_id, struct mutual *mu) {
+    close(client_id);
 
 }
 
-void listen_login(int client_id){
-    printf("1 %d\n", client_id);
-}
-
-void listen_data(int client_id){
-    printf("3 %d\n", client_id);
+void listen_close(int client_id){
+    close(client_id);
 }

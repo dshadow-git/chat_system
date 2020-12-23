@@ -12,5 +12,4 @@ int main(){
     connect_create(SERVER_HOST , SERVER_PORT);
     home_init();
     connect_close();
-
 }
