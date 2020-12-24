@@ -9,4 +9,6 @@
 
 void home_init();
 
+void home_menu();
+
 #endif //CHAT_SYSTEM_HOME_VIEW_H

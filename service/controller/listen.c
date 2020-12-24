@@ -14,7 +14,7 @@ void listen_register(int client_id, struct mutual *mu) {
         mu->data = &user;
     } else {
         PERROR("recv");
-        listen_nu_login(client_id, NULL);
+        listen_un_login(client_id, NULL);
     }
 }
 
@@ -50,9 +50,15 @@ void listen_group(int client_id, struct mutual *mu) {
     }
 }
 
-void listen_nu_login(int client_id, struct mutual *mu) {
-    close(client_id);
-
+void listen_un_login(int client_id, struct mutual *mu) {
+    struct user user;
+    int ret = recv(client_id, (void*)&user, sizeof(user), 0);
+    if (ret == sizeof(user)){
+        printf("id:%s, pwd:%s\n", user.id, user.pwd);
+        mu->data = &user;
+    } else {
+        PERROR("recv");
+    }
 }
 
 void listen_close(int client_id){

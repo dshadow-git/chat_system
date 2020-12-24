@@ -49,3 +49,9 @@ int account_view_register(){
     user.sex = sex;
     return account_srv_register(user);
 }
+
+void account_view_nu_login(){
+    struct user user;
+    strcpy(user.id, get_user_id());
+    account_srv_un_login(user);
+}

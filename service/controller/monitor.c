@@ -16,22 +16,20 @@ void *listen_distribute(void* arg){
     while (1) {
         struct mutual *mu = (struct mutual *) malloc(sizeof(struct mutual));
         int ret = recv(client_id, mu, sizeof(struct mutual), 0);
-        if (ret == -1){
+        if (ret <= 0){
             perror("recv");
+            listen_close(client_id);
             break;
-        }
-        if (ret == 0) {
-            perror("recv");
         }
         printf("type:%d, len:%d\n", mu->type, mu->data_len);
         switch (mu->type) {
             case REQUEST_MUTUAL_LOGIN:
                 listen_login(client_id, mu);
-                account_sql_login(*(struct user*)mu->data);
+                account_sql_login(*(struct user *) mu->data, client_id);
                 break;
             case REQUEST_MUTUAL_REGISTER:
                 listen_register(client_id, mu);
-                account_sql_register(*(struct user*)mu->data);
+                account_sql_register(*(struct user *) mu->data, client_id);
                 break;
             case REQUEST_MUTUAL_FRIEND:
                 listen_friend(client_id, mu);
@@ -40,8 +38,8 @@ void *listen_distribute(void* arg){
                 listen_group(client_id, mu);
                 break;
             case REQUEST_MUTUAL_UN_LOGIN:
-                listen_nu_login(client_id, mu);
-                account_sql_nu_login(*(struct user*)mu->data);
+                listen_un_login(client_id, mu);
+                account_sql_un_login(*(struct user *) mu->data);
                 break;
             default:
                 printf("未知数据类型\n");
@@ -84,7 +82,7 @@ int my_listen() {
     }
 
     pthread_t nit[MAXCLINE];
-
+    int c_nit = 0;
     while(1){
         struct sockaddr_in client_addr; // 客户端的地址信息
         int client_sock = accept(sock_fd, (struct sockaddr*)&client_addr, &sin_size);
@@ -92,7 +90,7 @@ int my_listen() {
             PERROR("accept");
             return -1;
         }
-        pthread_t tid;
-        pthread_create(&tid, NULL, listen_distribute, (void*)&client_sock);
+        pthread_create(&nit[c_nit], NULL, listen_distribute, (void*)&client_sock);
+        c_nit++;
     }
 }

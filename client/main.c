@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include "main_view.h"
+#include "main.h"
 #include "service/include/connect_srv.h"
 #include "view/include/home_view.h"
 

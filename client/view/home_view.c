@@ -13,7 +13,8 @@ void home_init(){
     int choice;
     do{
         if(uid > 0){
-
+            home_menu();
+            uid = 0;
         }
         system("clear");
         printf(
@@ -76,7 +77,7 @@ void home_menu(){
 
                 break;
             case '6':
-
+                account_view_nu_login();
                 break;
         }
     }while(choice != '6');

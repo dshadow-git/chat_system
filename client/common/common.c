@@ -2,7 +2,6 @@
 // Created by lei-long on 2020/12/22.
 //
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../include/common.h"
@@ -22,13 +21,14 @@ int get_sock_id(){
 }
 
 void set_user_id(char *id){
-    memcpy(user_id, id, USER_ID_SIZE);
+    memcpy(user_id, id, USER_ID_SIZE-1);
+    user_id[USER_ID_SIZE-1] = '\0';
 }
 
 char* get_user_id(){
-
     char *id = (char*) malloc (USER_ID_SIZE * sizeof(char));
     memcpy(id, user_id, USER_ID_SIZE);
+    id[USER_ID_SIZE-1] = '\0';
     return id;
 }
 

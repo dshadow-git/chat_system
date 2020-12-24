@@ -15,7 +15,7 @@ void listen_friend(int client_id, struct mutual *mu);
 
 void listen_group(int client_id, struct mutual *mu);
 
-void listen_nu_login(int client_id, struct mutual *mu);
+void listen_un_login(int client_id, struct mutual *mu);
 
 void listen_close(int client_id);
 

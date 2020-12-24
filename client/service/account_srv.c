@@ -60,3 +60,25 @@ int account_srv_register(struct user user){
     getchar();
     return 1;
 }
+
+void account_srv_un_login(struct user user){
+    int sock_id = get_sock_id();
+    struct mutual mu;
+    mu.type = MY_MUTUAL_UN_LOGIN;
+    mu.data_len = sizeof(user);
+    int ret;
+    ret = send(sock_id, (void*)&mu, sizeof(mu), 0);
+    if (ret == -1){
+        perror("send");
+        return ;
+    }
+
+    ret = send(sock_id, (void*)&user, sizeof(user), 0);
+    if (ret == -1){
+        perror("send");
+        return ;
+    }
+
+    printf("退出成功!按任意键继续\n");
+    getchar();
+}

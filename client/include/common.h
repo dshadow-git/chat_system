@@ -20,6 +20,10 @@
 #define MY_MSG_FILE 11
 #define MY_MSG_CONTENT 12
 
+#define PERROR(error) \
+    printf("%s:%s:%d\n", __FILE__, __func__, __LINE__); \
+    perror(error)
+
 struct mutual{
     int type;
     int data_len;

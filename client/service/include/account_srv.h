@@ -11,4 +11,6 @@ int account_srv_login(char* id, char* pwd);
 
 int account_srv_register(struct user user);
 
+void account_srv_un_login(struct user user);
+
 #endif //CHAT_SYSTEM_ACCOUNT_SRV_H
