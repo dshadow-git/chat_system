@@ -17,18 +17,22 @@ void account_ctl_to_user(struct user *user, int sock_id) {
     if (send(sock_id, (void*)user, sizeof(struct user), 0) == -1){
         PERROR("send");
     }
+    printf("请求成功回应完成\n");
 }
 
-void account_ctl_to_mag(char *buf, int sock_id) {
+void account_ctl_to_msg(char *buf, int sock_id) {
+    printf("%s\n", buf);
     struct mutual mu;
     mu.type = RESPONSE_FAILED;
     struct general_msg *msg = (struct general_msg*) malloc (sizeof(struct general_msg) + DATA_MAX_SIZE);
     msg->data_len = sprintf(msg->data, "%s", buf);
     mu.data_len = sizeof(struct general_msg) + msg->data_len;
-    if (send(sock_id, (void*)&mu, sizeof(mu), 0) == -1){
+    printf("mu: type: %d len: %d size %lu\n", mu.type, mu.data_len, sizeof(struct mutual));
+    if (send(sock_id, (void*)&mu, sizeof(struct mutual), 0) == -1){
         PERROR("send");
     }
-    if (send(sock_id, (void*)msg, mu.type, 0) == -1){
+    if (send(sock_id, (void*)msg, mu.data_len, 0) == -1){
         PERROR("send");
     }
+    printf("请求失败回应完成\n");
 }

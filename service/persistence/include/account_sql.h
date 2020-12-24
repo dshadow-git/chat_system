@@ -6,11 +6,10 @@
 #define CHAT_SYSTEM_ACCOUNT_SQL_H
 
 #include "../../include/persistence.h"
-#include "../../controller/include/account_ctl.h"
 
 void account_sql_login(struct user user, int sock_id);
 
-void account_sql_register(struct user user, int sock_id);
+void account_sql_register(struct user *user, int sock_id);
 
 void account_sql_un_login(struct user user);
 

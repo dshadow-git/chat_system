@@ -9,16 +9,37 @@
 #include "include/connect_srv.h"
 
 void *thread(void* arg){
+    int sock_id = get_sock_id();
 
+    while (1) {
+        struct mutual *mu = (struct mutual *) malloc(sizeof(struct mutual));
+        int ret = recv(sock_id, (void*)mu, sizeof(struct mutual), 0);
+        if (ret <= 0){
+            perror("recv");
+            break;
+        }
+        printf("recv: ret: %d, type: %d, len:%d\n", ret, mu->type, mu->data_len);
+        switch (mu->type) {
+            case RESPONSE_SUCCESS:
+                listen_success();
+                break;
+            case RESPONSE_FAILED:
+                listen_failed(mu->data_len);
+                break;
+            case RESPONSE_LOGIN:
+                listen_success();
+                break;
+            default:
+                printf("未知数据类型\n");
+        }
+    }
+    pthread_exit(0);
 }
 
 int connect_create(const char *host ,int port){
     int sock_fd;
     struct sockaddr_in clie_addr;
-    //char *out;
     pthread_t p_id;
-    //   pthread_mutex_init(&mutex ,NULL);
-    // pthread_cond_init(&cond ,NULL);
     memset(&clie_addr ,0 ,sizeof(struct sockaddr_in));
     clie_addr.sin_family = AF_INET;
     clie_addr.sin_port = htons(port);
@@ -28,15 +49,13 @@ int connect_create(const char *host ,int port){
         perror("socket");
         exit(0);
     }
-    set_sock_id(sock_fd);
     if(connect(sock_fd , (struct sockaddr *)&clie_addr,sizeof(struct sockaddr_in)) < 0){
         printf("%s:%d:\n", __func__, __LINE__);
         perror("connect");
         exit(0);
     }
-    pthread_create(&p_id , NULL , thread , NULL);
-    //usleep(5000);
-    //pthread_cond_signal(&cond);
+    set_sock_id(sock_fd);
+    pthread_create(&p_id , NULL , thread , &sock_fd);
     return 1;
 }
 

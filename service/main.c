@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "main.h"
 #include "controller/include/monitor.h"
-#include "persistence/include/mysql_per.h"
+#include "include/persistence.h"
 
 int main(){
     mySQL_connect(MYSQL_HOST, MYSQL_USER, MYSQL_PWD, MYSQL_DATABASE);

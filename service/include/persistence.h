@@ -17,7 +17,7 @@ MYSQL* get_sql_handle();
 /*
  * 连接数据库
  */
-int mySQL_connect(const char *host , const char *user , const char *pass , const char *database);
+int mySQL_connect(const char *host , const char *user , const char *pwd , const char *database);
 
 /*
  * 清理资源,关闭连接

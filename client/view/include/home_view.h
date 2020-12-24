@@ -11,4 +11,6 @@ void home_init();
 
 void home_menu();
 
+void set_home_mark(int m);
+
 #endif //CHAT_SYSTEM_HOME_VIEW_H

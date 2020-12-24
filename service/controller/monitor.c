@@ -29,7 +29,7 @@ void *listen_distribute(void* arg){
                 break;
             case REQUEST_MUTUAL_REGISTER:
                 listen_register(client_id, mu);
-                account_sql_register(*(struct user *) mu->data, client_id);
+                account_sql_register((struct user *) mu->data, client_id);
                 break;
             case REQUEST_MUTUAL_FRIEND:
                 listen_friend(client_id, mu);

@@ -31,8 +31,6 @@ int account_srv_login(char* id, char* pwd){
         return 0;
     }
     set_user_id(id);
-    printf("登录成功!按任意键继续\n");
-    getchar();
     return 1;
 }
 
@@ -55,13 +53,10 @@ int account_srv_register(struct user user){
         perror("send");
         return 0;
     }
-
-    printf("注册成功!按任意键继续\n");
-    getchar();
     return 1;
 }
 
-void account_srv_un_login(struct user user){
+int account_srv_un_login(struct user user){
     int sock_id = get_sock_id();
     struct mutual mu;
     mu.type = MY_MUTUAL_UN_LOGIN;
@@ -70,15 +65,13 @@ void account_srv_un_login(struct user user){
     ret = send(sock_id, (void*)&mu, sizeof(mu), 0);
     if (ret == -1){
         perror("send");
-        return ;
+        return 0;
     }
 
     ret = send(sock_id, (void*)&user, sizeof(user), 0);
     if (ret == -1){
         perror("send");
-        return ;
+        return 0;
     }
-
-    printf("退出成功!按任意键继续\n");
-    getchar();
+    return 1;
 }

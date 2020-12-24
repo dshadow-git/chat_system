@@ -6,6 +6,7 @@
 #define CHAT_SYSTEM_CONNECT_SRV_H
 
 #include "../../include/server.h"
+#include "listens.h"
 
 int connect_create(const char *host ,int port);
 

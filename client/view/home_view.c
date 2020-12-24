@@ -7,14 +7,16 @@
 #include "include/home_view.h"
 #include "include/account_view.h"
 
+static int mark;
+
 void home_init(){
-    int uid = 0;
-    int rid;
+    create_lock_home();
+    mark = 0;
     int choice;
     do{
-        if(uid > 0){
+        if(mark == 1){
             home_menu();
-            uid = 0;
+            mark = 0;
         }
         system("clear");
         printf(
@@ -32,12 +34,17 @@ void home_init(){
         ffflush();
         switch(choice){
             case 1:
-                uid = account_view_login();
+                if (account_view_login()){
+                    sem_wait(get_lock_home());
+                }
                 break;
             case 2:
-                rid = account_view_register();
+                if (account_view_register()){
+                    sem_wait(get_lock_home());
+                }
                 break;
             case 3:
+                destroy_lock_home();
                 return;
                 break;
             default:
@@ -77,8 +84,14 @@ void home_menu(){
 
                 break;
             case '6':
-                account_view_nu_login();
+                if (account_view_nu_login()){
+                    sem_wait(get_lock_home());
+                }
                 break;
         }
     }while(choice != '6');
+}
+
+void set_home_mark(int m){
+    mark = m;
 }

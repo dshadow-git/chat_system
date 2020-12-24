@@ -11,6 +11,10 @@ int account_view_login();
 
 int account_view_register();
 
-void account_view_nu_login();
+int account_view_nu_login();
+
+void account_view_success();
+
+void account_view_failed(char* buf);
 
 #endif //CHAT_SYSTEM_ACCOUNT_VIEW_H
